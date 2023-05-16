@@ -1,6 +1,7 @@
 package com.example.restfulwebservice.controller;
 
 import com.example.restfulwebservice.domain.User;
+import com.example.restfulwebservice.exception.UserNotFoundException;
 import com.example.restfulwebservice.service.UserDaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,13 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User retrieveUser(@PathVariable int id) {
-        return userDaoService.findOne(id);
+        User user = userDaoService.findOne(id);
+
+        if (user == null) {
+            throw new UserNotFoundException(String.format("ID[%s] not found", id));
+        }
+
+        return user;
     }
 
     @PostMapping("/users")
