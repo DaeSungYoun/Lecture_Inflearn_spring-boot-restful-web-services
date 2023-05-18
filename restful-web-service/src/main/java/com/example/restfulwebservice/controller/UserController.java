@@ -3,6 +3,7 @@ package com.example.restfulwebservice.controller;
 import com.example.restfulwebservice.domain.User;
 import com.example.restfulwebservice.exception.UserNotFoundException;
 import com.example.restfulwebservice.service.UserDaoService;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -10,14 +11,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class UserController {
 
     private UserDaoService userDaoService;
+    private MessageSource messageSource;
 
-    public UserController(UserDaoService userDaoService) {
+    public UserController(UserDaoService userDaoService, MessageSource messageSource) {
         this.userDaoService = userDaoService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping("/users")
@@ -54,5 +58,10 @@ public class UserController {
         if (deleteUser == null) {
             throw new UserNotFoundException(String.format("ID[%s] not found", id));
         }
+    }
+
+    @GetMapping("/hello-world-internationalized")
+    public String helloWorldInternationalized(@RequestHeader(name = "Accept-Language", required = false) Locale locale) {
+        return messageSource.getMessage("greeting.message", null, locale);
     }
 }
